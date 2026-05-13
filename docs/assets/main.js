@@ -9,12 +9,80 @@
   var cardLinkNodes = document.querySelectorAll("[data-card-link]");
   var auroraCanvas = document.querySelector("[data-aurora]");
   var motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var compactQuery = window.matchMedia("(max-width: 760px)");
+  var coarseQuery = window.matchMedia("(pointer: coarse)");
+  var tabletQuery = window.matchMedia("(max-width: 1024px)");
+  var richViewportQuery = window.matchMedia("(min-width: 1440px)");
   var touchQuery = window.matchMedia("(pointer: coarse), (max-width: 760px)");
+  var tierQueries = [motionQuery, compactQuery, coarseQuery, tabletQuery, richViewportQuery];
+  var isLegalPage = Boolean(document.querySelector(".legal-background"));
+  var visualTier = "static";
   var root = document.documentElement;
   var pointer = {
     x: 0.56,
     y: 0.34
   };
+
+  function hasCanvasSupport() {
+    return Boolean(auroraCanvas && auroraCanvas.getContext && window.requestAnimationFrame);
+  }
+
+  function isLowCapability() {
+    var cores = navigator.hardwareConcurrency || 0;
+    var memory = typeof navigator.deviceMemory === "number" ? navigator.deviceMemory : 4;
+
+    return !hasCanvasSupport() || memory <= 2 || (cores > 0 && cores <= 4);
+  }
+
+  function isHighCapability() {
+    var cores = navigator.hardwareConcurrency || 0;
+    var memory = typeof navigator.deviceMemory === "number" ? navigator.deviceMemory : 4;
+    var pixelRatio = window.devicePixelRatio || 1;
+
+    return richViewportQuery.matches && cores >= 8 && memory >= 4 && pixelRatio <= 2.25;
+  }
+
+  function chooseVisualTier() {
+    if (motionQuery.matches || isLegalPage || compactQuery.matches || coarseQuery.matches || !hasCanvasSupport()) {
+      return "static";
+    }
+
+    if (tabletQuery.matches || isLowCapability()) {
+      return "balanced";
+    }
+
+    return isHighCapability() ? "rich" : "balanced";
+  }
+
+  function applyVisualTier() {
+    var nextTier = chooseVisualTier();
+
+    if (nextTier === visualTier && document.body.classList.contains("visual-tier-" + nextTier)) {
+      return false;
+    }
+
+    document.body.classList.remove("visual-tier-static", "visual-tier-balanced", "visual-tier-rich");
+    document.body.classList.add("visual-tier-" + nextTier);
+    visualTier = nextTier;
+
+    return true;
+  }
+
+  function isVisualTier(tier) {
+    return visualTier === tier;
+  }
+
+  function addTierChangeListener(callback) {
+    tierQueries.forEach(function (query) {
+      if (typeof query.addEventListener === "function") {
+        query.addEventListener("change", callback);
+      } else if (typeof query.addListener === "function") {
+        query.addListener(callback);
+      }
+    });
+  }
+
+  applyVisualTier();
 
   function setHeaderState() {
     if (!header) {
@@ -151,9 +219,8 @@
       return;
     }
 
-    if (touchQuery.matches) {
-      auroraCanvas.setAttribute("data-mobile-static", "true");
-      return;
+    if (isVisualTier("static")) {
+      auroraCanvas.setAttribute("data-visual-tier", "static");
     }
 
     var context = auroraCanvas.getContext("2d", { alpha: true });
@@ -169,21 +236,22 @@
     var frameId = 0;
     var particles = [];
     var staticFrameDrawn = false;
+    var lastFrameTime = 0;
+    var frameInterval = 1000 / 24;
 
     function shouldDisableAurora() {
-      return touchQuery.matches;
+      return isVisualTier("static");
     }
 
     function shouldUseStaticAurora() {
-      return motionQuery.matches;
+      return !isVisualTier("rich") || motionQuery.matches;
     }
 
     function particleCount() {
       var area = width * height;
-      var isTouch = touchQuery.matches;
-      var divisor = isLegal ? 62000 : (isTouch ? 56000 : 34000);
-      var min = isLegal ? 16 : (isTouch ? 22 : 30);
-      var max = isLegal ? 38 : (isTouch ? 48 : 92);
+      var divisor = isLegal ? 76000 : (isVisualTier("rich") ? 78000 : 92000);
+      var min = isLegal ? 12 : (isVisualTier("rich") ? 18 : 14);
+      var max = isLegal ? 22 : (isVisualTier("rich") ? 42 : 26);
 
       return Math.max(min, Math.min(max, Math.floor(area / divisor)));
     }
@@ -213,7 +281,7 @@
     }
 
     function resizeCanvas() {
-      dpr = Math.min(window.devicePixelRatio || 1, 1.65);
+      dpr = Math.min(window.devicePixelRatio || 1, isVisualTier("rich") ? 1.35 : 1.15);
       width = Math.max(1, auroraCanvas.clientWidth || window.innerWidth);
       height = Math.max(1, auroraCanvas.clientHeight || window.innerHeight);
       auroraCanvas.width = Math.floor(width * dpr);
@@ -260,8 +328,8 @@
       context.lineWidth = (isLegal ? 24 : 42) + bandIndex * (isLegal ? 1.4 : 2.8);
       context.lineCap = "round";
       context.lineJoin = "round";
-      context.filter = "blur(" + (isLegal ? 13 : 22) + "px)";
-      context.globalAlpha = isLegal ? 0.42 : 0.86;
+      context.filter = "blur(" + (isLegal ? 8 : (isVisualTier("rich") ? 12 : 9)) + "px)";
+      context.globalAlpha = isLegal ? 0.34 : (isVisualTier("rich") ? 0.64 : 0.46);
       context.stroke();
 
       context.filter = "none";
@@ -312,7 +380,7 @@
       context.save();
       context.globalCompositeOperation = "screen";
 
-      var bandCount = isLegal ? 4 : (touchQuery.matches ? 5 : 7);
+      var bandCount = isLegal ? 3 : (isVisualTier("rich") ? 5 : 4);
       for (var band = 0; band < bandCount; band += 1) {
         drawBand(time, band, bandCount);
       }
@@ -327,7 +395,11 @@
         return;
       }
 
-      drawFrame(time);
+      if (time - lastFrameTime >= frameInterval) {
+        drawFrame(time);
+        lastFrameTime = time;
+      }
+
       frameId = window.requestAnimationFrame(render);
     }
 
@@ -356,6 +428,7 @@
       }
 
       if (!frameId && !document.hidden) {
+        lastFrameTime = 0;
         frameId = window.requestAnimationFrame(render);
       }
     }
@@ -370,7 +443,10 @@
     }
 
     function handleMotionChange() {
+      applyVisualTier();
       staticFrameDrawn = false;
+      auroraCanvas.setAttribute("data-visual-tier", visualTier);
+
       if (shouldDisableAurora()) {
         window.cancelAnimationFrame(frameId);
         frameId = 0;
@@ -385,6 +461,7 @@
     }
 
     resizeCanvas();
+    auroraCanvas.setAttribute("data-visual-tier", visualTier);
     start();
 
     window.addEventListener("resize", function () {
@@ -394,13 +471,7 @@
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    if (typeof motionQuery.addEventListener === "function") {
-      motionQuery.addEventListener("change", handleMotionChange);
-      touchQuery.addEventListener("change", handleMotionChange);
-    } else if (typeof motionQuery.addListener === "function") {
-      motionQuery.addListener(handleMotionChange);
-      touchQuery.addListener(handleMotionChange);
-    }
+    addTierChangeListener(handleMotionChange);
   }
 
   function initScrollCinema() {
@@ -461,7 +532,7 @@
     function updateCinema() {
       ticking = false;
 
-      if (motionQuery.matches) {
+      if (motionQuery.matches || !isVisualTier("rich")) {
         setStaticCinema();
         return;
       }
@@ -511,25 +582,45 @@
       }
     }
 
-    if (touchQuery.matches) {
-      document.body.classList.add("is-mobile-static");
+    var scrollCinemaActive = false;
+
+    function enableCinema() {
+      if (scrollCinemaActive) {
+        requestCinemaUpdate();
+        return;
+      }
+
+      scrollCinemaActive = true;
+      document.body.classList.add("is-scroll-cinema");
+      updateCinema();
+      window.addEventListener("scroll", requestCinemaUpdate, { passive: true });
+      window.addEventListener("resize", requestCinemaUpdate, { passive: true });
+    }
+
+    function disableCinema() {
+      if (scrollCinemaActive) {
+        window.removeEventListener("scroll", requestCinemaUpdate);
+        window.removeEventListener("resize", requestCinemaUpdate);
+      }
+
+      scrollCinemaActive = false;
+      ticking = false;
+      document.body.classList.remove("is-scroll-cinema");
       setStaticCinema();
-      return;
     }
 
-    document.body.classList.add("is-scroll-cinema");
-    updateCinema();
+    function syncCinemaTier() {
+      applyVisualTier();
 
-    window.addEventListener("scroll", requestCinemaUpdate, { passive: true });
-    window.addEventListener("resize", requestCinemaUpdate, { passive: true });
-
-    if (typeof motionQuery.addEventListener === "function") {
-      motionQuery.addEventListener("change", requestCinemaUpdate);
-      touchQuery.addEventListener("change", requestCinemaUpdate);
-    } else if (typeof motionQuery.addListener === "function") {
-      motionQuery.addListener(requestCinemaUpdate);
-      touchQuery.addListener(requestCinemaUpdate);
+      if (isVisualTier("rich")) {
+        enableCinema();
+      } else {
+        disableCinema();
+      }
     }
+
+    syncCinemaTier();
+    addTierChangeListener(syncCinemaTier);
   }
 
   setYear();
@@ -540,9 +631,11 @@
   initScrollCinema();
 
   window.addEventListener("scroll", requestHeaderState, { passive: true });
-  if (!touchQuery.matches) {
-    window.addEventListener("pointermove", setPointerGlow, { passive: true });
-  }
+  window.addEventListener("pointermove", function (event) {
+    if (isVisualTier("rich")) {
+      setPointerGlow(event);
+    }
+  }, { passive: true });
 
   if (navToggle) {
     navToggle.addEventListener("click", toggleNav);
