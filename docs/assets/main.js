@@ -6,6 +6,7 @@
   var navMenu = document.querySelector("[data-nav-menu]");
   var yearNodes = document.querySelectorAll("[data-current-year]");
   var revealNodes = document.querySelectorAll(".reveal");
+  var cardLinkNodes = document.querySelectorAll("[data-card-link]");
   var auroraCanvas = document.querySelector("[data-aurora]");
   var motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   var touchQuery = window.matchMedia("(pointer: coarse), (max-width: 760px)");
@@ -21,6 +22,20 @@
     }
 
     header.classList.toggle("is-scrolled", window.scrollY > 8);
+  }
+
+  var headerTicking = false;
+
+  function requestHeaderState() {
+    if (headerTicking) {
+      return;
+    }
+
+    headerTicking = true;
+    window.requestAnimationFrame(function () {
+      headerTicking = false;
+      setHeaderState();
+    });
   }
 
   function closeNav() {
@@ -66,8 +81,44 @@
     return Math.max(min, Math.min(max, value));
   }
 
+  function isNestedInteractiveElement(card, element) {
+    var interactive = element.closest("a, button, input, textarea, select, summary, [role='button'], [role='link']");
+    return Boolean(interactive && interactive !== card && card.contains(interactive));
+  }
+
+  function openCardLink(card) {
+    var href = card.getAttribute("data-card-link");
+
+    if (href) {
+      window.location.href = href;
+    }
+  }
+
+  function initCardLinks() {
+    if (!cardLinkNodes.length) {
+      return;
+    }
+
+    cardLinkNodes.forEach(function (card) {
+      card.addEventListener("click", function (event) {
+        if (event.target instanceof Element && isNestedInteractiveElement(card, event.target)) {
+          return;
+        }
+
+        openCardLink(card);
+      });
+    });
+  }
+
   function revealContent() {
     if (!revealNodes.length) {
+      return;
+    }
+
+    if (touchQuery.matches) {
+      revealNodes.forEach(function (node) {
+        node.classList.add("is-visible");
+      });
       return;
     }
 
@@ -100,6 +151,11 @@
       return;
     }
 
+    if (touchQuery.matches) {
+      auroraCanvas.setAttribute("data-mobile-static", "true");
+      return;
+    }
+
     var context = auroraCanvas.getContext("2d", { alpha: true });
 
     if (!context) {
@@ -114,8 +170,12 @@
     var particles = [];
     var staticFrameDrawn = false;
 
+    function shouldDisableAurora() {
+      return touchQuery.matches;
+    }
+
     function shouldUseStaticAurora() {
-      return motionQuery.matches || touchQuery.matches;
+      return motionQuery.matches;
     }
 
     function particleCount() {
@@ -160,6 +220,11 @@
       auroraCanvas.height = Math.floor(height * dpr);
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       resetParticles();
+      staticFrameDrawn = false;
+    }
+
+    function clearCanvas() {
+      context.clearRect(0, 0, width, height);
       staticFrameDrawn = false;
     }
 
@@ -257,7 +322,7 @@
     }
 
     function render(time) {
-      if (document.hidden || shouldUseStaticAurora()) {
+      if (document.hidden || shouldDisableAurora() || shouldUseStaticAurora()) {
         frameId = 0;
         return;
       }
@@ -276,6 +341,13 @@
     }
 
     function start() {
+      if (shouldDisableAurora()) {
+        window.cancelAnimationFrame(frameId);
+        frameId = 0;
+        clearCanvas();
+        return;
+      }
+
       if (shouldUseStaticAurora()) {
         window.cancelAnimationFrame(frameId);
         frameId = 0;
@@ -299,7 +371,11 @@
 
     function handleMotionChange() {
       staticFrameDrawn = false;
-      if (shouldUseStaticAurora()) {
+      if (shouldDisableAurora()) {
+        window.cancelAnimationFrame(frameId);
+        frameId = 0;
+        clearCanvas();
+      } else if (shouldUseStaticAurora()) {
         window.cancelAnimationFrame(frameId);
         frameId = 0;
         drawStaticFrame();
@@ -309,14 +385,11 @@
     }
 
     resizeCanvas();
-    drawStaticFrame();
     start();
 
     window.addEventListener("resize", function () {
       resizeCanvas();
-      if (shouldUseStaticAurora()) {
-        drawStaticFrame();
-      }
+      start();
     }, { passive: true });
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -438,6 +511,12 @@
       }
     }
 
+    if (touchQuery.matches) {
+      document.body.classList.add("is-mobile-static");
+      setStaticCinema();
+      return;
+    }
+
     document.body.classList.add("is-scroll-cinema");
     updateCinema();
 
@@ -455,12 +534,15 @@
 
   setYear();
   setHeaderState();
+  initCardLinks();
   revealContent();
   initAurora();
   initScrollCinema();
 
-  window.addEventListener("scroll", setHeaderState, { passive: true });
-  window.addEventListener("pointermove", setPointerGlow, { passive: true });
+  window.addEventListener("scroll", requestHeaderState, { passive: true });
+  if (!touchQuery.matches) {
+    window.addEventListener("pointermove", setPointerGlow, { passive: true });
+  }
 
   if (navToggle) {
     navToggle.addEventListener("click", toggleNav);
