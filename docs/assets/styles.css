@@ -222,7 +222,7 @@ select {
 }
 
 body[data-art-page] .site-background {
-  transform: translateZ(0);
+  transform: none;
 }
 
 body[data-art-page] .site-background::before {
@@ -400,26 +400,26 @@ body[data-art-page] .light-layer {
 }
 
 .visual-tier-balanced .site-background::before {
-  animation: aurora-shear 42s var(--ease) infinite alternate;
+  animation: none;
 }
 
 .visual-tier-balanced .site-background::after {
   opacity: 0.2;
-  animation: refract-slide 58s linear infinite;
+  animation: none;
 }
 
 .visual-tier-balanced .aurora-canvas {
-  opacity: 0.36;
+  display: none;
 }
 
 .visual-tier-balanced .grid-layer {
   opacity: 0.24;
-  animation: grid-breathe 32s var(--ease) infinite alternate;
+  animation: none;
 }
 
 .visual-tier-balanced .light-layer {
   opacity: 0.24;
-  animation: slow-drift 44s var(--ease) infinite alternate;
+  animation: none;
 }
 
 .visual-tier-balanced .status-dot,
@@ -1299,6 +1299,14 @@ p {
   padding-top: 32px;
 }
 
+.apps-index-hero .container.narrow {
+  max-width: none;
+}
+
+.apps-index-hero p:not(.eyebrow) {
+  max-width: 680px;
+}
+
 .app-list-card {
   grid-template-columns: auto minmax(0, 1fr);
 }
@@ -1745,7 +1753,113 @@ body.visual-tier-rich[data-art-page] .app-icon {
 
 @media (min-width: 1440px) {
   :root {
-    --max-width: 1180px;
+    --max-width: 1280px;
+  }
+
+  .page-hero .container.narrow {
+    max-width: min(960px, var(--max-width));
+  }
+
+  .apps-index-hero .container.narrow {
+    width: min(calc(100% - 32px), 1180px);
+    max-width: none;
+  }
+
+  .app-list-stack {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  .app-list-card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .app-list-card .card-actions {
+    grid-column: auto;
+    justify-content: flex-end;
+  }
+}
+
+@media (min-width: 1680px) {
+  :root {
+    --max-width: 1360px;
+  }
+}
+
+@media (min-width: 1921px) {
+  :root {
+    --max-width: 1480px;
+  }
+
+  .section-pad {
+    padding: clamp(96px, 7vh, 128px) 0;
+  }
+
+  .page-hero,
+  .app-hero,
+  .legal-hero {
+    padding-top: clamp(118px, 8vh, 150px);
+    padding-bottom: clamp(56px, 5vh, 82px);
+  }
+
+  .app-list-stack {
+    max-width: 1320px;
+  }
+
+  .apps-index-hero .container.narrow {
+    width: min(calc(100% - 32px), 1320px);
+  }
+
+  .feature-card {
+    padding: 34px;
+  }
+
+  .footer-grid {
+    padding: 18px 22px;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    --max-width: 1560px;
+  }
+
+  .app-list-stack {
+    max-width: 1400px;
+  }
+
+  .apps-index-hero .container.narrow {
+    width: min(calc(100% - 32px), 1400px);
+  }
+}
+
+@media (min-width: 1921px), (min-height: 1201px) {
+  .aurora-canvas {
+    display: none;
+  }
+
+  body[data-art-page] .site-background,
+  body[data-art-page] .site-background::before,
+  body[data-art-page] .site-background::after,
+  body[data-art-page] .grid-layer,
+  body[data-art-page] .light-layer {
+    transform: none;
+  }
+
+  .visual-tier-balanced .site-background::before,
+  .visual-tier-balanced .site-background::after,
+  .visual-tier-balanced .grid-layer,
+  .visual-tier-balanced .light-layer {
+    animation: none;
+  }
+
+  .visual-tier-balanced .hero::before,
+  .visual-tier-balanced .page-hero::before,
+  .visual-tier-balanced .app-hero::before,
+  .visual-tier-balanced .hero::after,
+  .visual-tier-balanced .page-hero::after,
+  .visual-tier-balanced .app-hero::after {
+    animation-duration: 36s;
   }
 }
 

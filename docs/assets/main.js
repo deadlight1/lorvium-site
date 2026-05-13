@@ -12,9 +12,8 @@
   var compactQuery = window.matchMedia("(max-width: 760px)");
   var coarseQuery = window.matchMedia("(pointer: coarse)");
   var tabletQuery = window.matchMedia("(max-width: 1024px)");
-  var richViewportQuery = window.matchMedia("(min-width: 1440px)");
   var touchQuery = window.matchMedia("(pointer: coarse), (max-width: 760px)");
-  var tierQueries = [motionQuery, compactQuery, coarseQuery, tabletQuery, richViewportQuery];
+  var tierQueries = [motionQuery, compactQuery, coarseQuery, tabletQuery];
   var isLegalPage = Boolean(document.querySelector(".legal-background"));
   var visualTier = "static";
   var root = document.documentElement;
@@ -27,19 +26,11 @@
     return Boolean(auroraCanvas && auroraCanvas.getContext && window.requestAnimationFrame);
   }
 
-  function isLowCapability() {
-    var cores = navigator.hardwareConcurrency || 0;
-    var memory = typeof navigator.deviceMemory === "number" ? navigator.deviceMemory : 4;
+  function isOversizedViewport() {
+    var pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    var pixelArea = window.innerWidth * window.innerHeight * pixelRatio * pixelRatio;
 
-    return !hasCanvasSupport() || memory <= 2 || (cores > 0 && cores <= 4);
-  }
-
-  function isHighCapability() {
-    var cores = navigator.hardwareConcurrency || 0;
-    var memory = typeof navigator.deviceMemory === "number" ? navigator.deviceMemory : 4;
-    var pixelRatio = window.devicePixelRatio || 1;
-
-    return richViewportQuery.matches && cores >= 8 && memory >= 4 && pixelRatio <= 2.25;
+    return window.innerWidth > 1920 || window.innerHeight > 1200 || pixelArea > 3000000;
   }
 
   function chooseVisualTier() {
@@ -47,11 +38,7 @@
       return "static";
     }
 
-    if (tabletQuery.matches || isLowCapability()) {
-      return "balanced";
-    }
-
-    return isHighCapability() ? "rich" : "balanced";
+    return "balanced";
   }
 
   function applyVisualTier() {
@@ -240,7 +227,7 @@
     var frameInterval = 1000 / 24;
 
     function shouldDisableAurora() {
-      return isVisualTier("static");
+      return isVisualTier("static") || isOversizedViewport() || !isVisualTier("rich");
     }
 
     function shouldUseStaticAurora() {
