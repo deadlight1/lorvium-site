@@ -8,6 +8,7 @@
   var revealNodes = document.querySelectorAll(".reveal");
   var cardLinkNodes = document.querySelectorAll("[data-card-link]");
   var auroraCanvas = document.querySelector("[data-aurora]");
+  var pageLoader = document.querySelector("[data-page-loader]");
   var motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   var compactQuery = window.matchMedia("(max-width: 760px)");
   var coarseQuery = window.matchMedia("(pointer: coarse)");
@@ -21,6 +22,7 @@
     x: 0.56,
     y: 0.34
   };
+  var loaderStartedAt = Date.now();
 
   function hasCanvasSupport() {
     return Boolean(auroraCanvas && auroraCanvas.getContext && window.requestAnimationFrame);
@@ -70,6 +72,48 @@
   }
 
   applyVisualTier();
+
+  function initPageLoader() {
+    if (!pageLoader || !root.classList.contains("has-js")) {
+      return;
+    }
+
+    var isFinished = false;
+    var minVisibleTime = motionQuery.matches ? 80 : 450;
+    var removeDelay = motionQuery.matches ? 140 : 560;
+
+    function finishLoader() {
+      if (isFinished) {
+        return;
+      }
+
+      isFinished = true;
+      root.classList.add("is-loaded");
+
+      window.setTimeout(function () {
+        root.classList.add("loader-done");
+
+        if (pageLoader.parentNode) {
+          pageLoader.parentNode.removeChild(pageLoader);
+        }
+      }, removeDelay);
+    }
+
+    function requestFinish() {
+      var elapsed = Date.now() - loaderStartedAt;
+      var delay = Math.max(0, minVisibleTime - elapsed);
+
+      window.setTimeout(finishLoader, delay);
+    }
+
+    if (document.readyState === "complete") {
+      requestFinish();
+    } else {
+      window.addEventListener("load", requestFinish, { once: true });
+    }
+
+    window.setTimeout(requestFinish, 1400);
+  }
 
   function setHeaderState() {
     if (!header) {
@@ -610,6 +654,7 @@
     addTierChangeListener(syncCinemaTier);
   }
 
+  initPageLoader();
   setYear();
   setHeaderState();
   initCardLinks();
