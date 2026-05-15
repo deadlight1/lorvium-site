@@ -142,62 +142,131 @@ body.nav-open {
   position: relative;
   z-index: 1;
   display: grid;
-  width: min(58vw, 360px);
-  min-width: 240px;
-  aspect-ratio: 1.35;
+  width: min(54vw, 340px);
+  min-width: 220px;
+  aspect-ratio: 1.18;
   place-items: center;
   isolation: isolate;
+  perspective: 760px;
 }
 
-.loader-panel {
+.loader-art::before {
+  content: "";
   position: absolute;
-  inset: 12% 8%;
-  border: 1px solid color-mix(in srgb, var(--accent-cool) 20%, transparent);
-  border-radius: var(--radius);
+  bottom: 17%;
+  width: min(62%, 218px);
+  height: 58px;
+  border-radius: 999px;
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--accent-cool) 12%, transparent), transparent 42%, color-mix(in srgb, var(--accent) 10%, transparent)),
-    repeating-linear-gradient(100deg, transparent 0 26px, color-mix(in srgb, var(--accent-blue) 8%, transparent) 27px 28px, transparent 29px 64px);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 24px 86px rgba(0, 0, 0, 0.4);
-  opacity: 0.58;
+    radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--accent-cool) 24%, transparent), transparent 62%),
+    radial-gradient(ellipse at 56% 50%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%);
+  opacity: 0.42;
+  transform: rotateX(78deg) translateY(18px);
+  animation: loader-shadow-breathe 1250ms var(--ease) infinite alternate;
 }
 
-.loader-panel-one {
-  transform: rotate(-8deg) translateY(-4%);
-}
-
-.loader-panel-two {
-  inset: 18% 15%;
-  opacity: 0.34;
-  transform: rotate(7deg) translateY(4%);
-}
-
-.loader-mark {
+.loader-object {
   position: relative;
+  width: clamp(96px, 18vw, 128px);
+  height: clamp(96px, 18vw, 128px);
+  transform-style: preserve-3d;
+  transform: rotateX(58deg) rotateZ(-34deg) translate3d(0, -8px, 0);
+  animation: loader-object-float 1250ms var(--ease) infinite alternate;
+}
+
+.loader-face,
+.loader-edge {
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--accent-cool) 24%, transparent);
+  pointer-events: none;
+}
+
+.loader-face {
+  inset: 0;
   display: grid;
-  width: 82px;
-  height: 82px;
   place-items: center;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius);
+  border-radius: 22px;
+  overflow: hidden;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 48%),
-    color-mix(in srgb, var(--bg-elevated-strong) 86%, transparent);
-  color: var(--accent-strong);
-  font-size: 2rem;
-  font-weight: 800;
+    linear-gradient(142deg, rgba(255, 255, 255, 0.18), transparent 38%, rgba(255, 230, 160, 0.1)),
+    linear-gradient(215deg, color-mix(in srgb, var(--accent-cool) 20%, transparent), color-mix(in srgb, var(--bg-elevated-strong) 92%, transparent) 54%, color-mix(in srgb, var(--accent-blue) 11%, transparent));
   box-shadow:
-    0 0 42px color-mix(in srgb, var(--accent-cool) 18%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14);
-  animation: loader-mark-pulse 1050ms var(--ease) infinite alternate;
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+    0 18px 52px rgba(0, 0, 0, 0.38);
+}
+
+.loader-face::before {
+  content: "";
+  position: absolute;
+  inset: 13%;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: 16px;
+  background:
+    linear-gradient(118deg, transparent 0 24%, rgba(255, 255, 255, 0.16) 38%, transparent 54%),
+    repeating-linear-gradient(100deg, transparent 0 20px, color-mix(in srgb, var(--accent-cool) 10%, transparent) 21px 22px, transparent 23px 48px);
+  opacity: 0.82;
+}
+
+.loader-face-front {
+  transform: translateZ(30px);
+}
+
+.loader-face-back {
+  opacity: 0.48;
+  transform: translate3d(22px, 20px, -30px);
+}
+
+.loader-edge {
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent-cool) 16%, transparent), color-mix(in srgb, var(--accent) 10%, transparent)),
+    color-mix(in srgb, var(--bg-elevated-strong) 86%, transparent);
+  opacity: 0.68;
+}
+
+.loader-edge-top {
+  left: 12px;
+  right: -22px;
+  top: -22px;
+  height: 34px;
+  transform: skewX(-38deg) translateZ(2px);
+}
+
+.loader-edge-right {
+  top: 12px;
+  right: -28px;
+  bottom: -24px;
+  width: 36px;
+  transform: skewY(-38deg) translateZ(1px);
+}
+
+.loader-edge-bottom {
+  left: 22px;
+  right: -14px;
+  bottom: -28px;
+  height: 34px;
+  transform: skewX(-38deg) translateZ(1px);
+  opacity: 0.44;
+}
+
+.loader-glyph {
+  position: relative;
+  z-index: 1;
+  color: var(--accent-strong);
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1;
+  text-shadow:
+    0 0 20px color-mix(in srgb, var(--accent) 32%, transparent),
+    0 0 42px color-mix(in srgb, var(--accent-cool) 28%, transparent);
 }
 
 .loader-line {
   position: absolute;
   left: 16%;
   right: 16%;
-  bottom: 18%;
+  bottom: 15%;
   height: 1px;
   overflow: hidden;
   background: color-mix(in srgb, var(--line-strong) 60%, transparent);
@@ -1524,14 +1593,25 @@ body[data-art-page] .footer-grid {
   }
 }
 
-@keyframes loader-mark-pulse {
+@keyframes loader-object-float {
   from {
-    transform: scale(1);
-    border-color: var(--line);
+    transform: rotateX(58deg) rotateZ(-34deg) translate3d(0, -8px, 0);
+    opacity: 0.92;
   }
   to {
-    transform: scale(1.035);
-    border-color: var(--line-strong);
+    transform: rotateX(54deg) rotateZ(-28deg) translate3d(0, -18px, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes loader-shadow-breathe {
+  from {
+    transform: rotateX(78deg) translateY(18px) scaleX(0.92);
+    opacity: 0.32;
+  }
+  to {
+    transform: rotateX(78deg) translateY(18px) scaleX(1.08);
+    opacity: 0.48;
   }
 }
 
@@ -1810,6 +1890,21 @@ body[data-art-page] .footer-grid {
     --shadow: 0 18px 44px rgba(0, 0, 0, 0.38);
   }
 
+  .loader-art {
+    width: min(68vw, 280px);
+    min-width: 190px;
+  }
+
+  .loader-object {
+    width: 92px;
+    height: 92px;
+    animation-duration: 1500ms;
+  }
+
+  .loader-face {
+    border-radius: 18px;
+  }
+
   body {
     background:
       radial-gradient(ellipse at 18% 4%, color-mix(in srgb, var(--accent-cool) 17%, transparent), transparent 34rem),
@@ -2061,6 +2156,17 @@ body[data-art-page] .footer-grid {
 
   .has-js .page-loader {
     transition-duration: 120ms;
+  }
+
+  .has-js .page-loader::after,
+  .loader-art::before,
+  .loader-object,
+  .loader-line span {
+    animation: none !important;
+  }
+
+  .loader-object {
+    transform: rotateX(56deg) rotateZ(-32deg) translate3d(0, -10px, 0);
   }
 
   h1 {
