@@ -21,21 +21,7 @@
   --glow-cool: rgba(120, 242, 211, 0.36);
   --glow-gold: rgba(255, 230, 160, 0.24);
   --glow-blue: rgba(124, 200, 255, 0.22);
-  --pointer-x: 50%;
-  --pointer-y: 32%;
-  --scroll-progress: 0;
-  --scene-progress: 0;
-  --depth-shift: 0px;
-  --depth-reverse: 0px;
-  --scene-opacity: 0.68;
-  --scene-soft-opacity: 0.49;
-  --scene-plane-opacity: 0.42;
   --scene-faint-opacity: 0.24;
-  --scene-curtain-opacity: 0.34;
-  --scene-curtain-soft-opacity: 0.22;
-  --cinema-scale: 1;
-  --card-drift: 0px;
-  --footer-glow: 0;
   --radius: 8px;
   --radius-sm: 6px;
   --max-width: 1120px;
@@ -89,7 +75,7 @@ body {
   flex-direction: column;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at var(--pointer-x) var(--pointer-y), color-mix(in srgb, var(--accent-cool) 11%, transparent), transparent 28rem),
+    radial-gradient(circle at 48% 30%, color-mix(in srgb, var(--accent-cool) 11%, transparent), transparent 28rem),
     linear-gradient(180deg, var(--bg), var(--bg-deep));
   color: var(--text);
   font-size: 16px;
@@ -337,98 +323,6 @@ select {
   animation: none;
 }
 
-.aurora-canvas {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.42;
-  pointer-events: none;
-  mix-blend-mode: normal;
-  transform: translate3d(0, var(--depth-reverse), 0);
-  transition: opacity 220ms var(--ease);
-}
-
-body[data-art-page] .site-background {
-  transform: none;
-}
-
-body[data-art-page] .site-background::before {
-  opacity: var(--scene-opacity);
-  transform: rotate(-6deg) translate3d(0, var(--depth-reverse), 0) scale(var(--cinema-scale));
-}
-
-body[data-art-page] .site-background::after {
-  opacity: var(--scene-soft-opacity);
-  transform: translate3d(0, var(--depth-shift), 0);
-}
-
-.cinema-depth-plane,
-.light-curtain {
-  display: none;
-  position: absolute;
-  pointer-events: none;
-}
-
-.cinema-depth-plane {
-  inset: -16%;
-  z-index: 1;
-  opacity: var(--scene-plane-opacity);
-  mix-blend-mode: normal;
-  contain: paint;
-  transform: translate3d(0, var(--depth-shift), 0);
-}
-
-.cinema-depth-plane-one {
-  background:
-    linear-gradient(107deg, transparent 0 26%, color-mix(in srgb, var(--accent-cool) 11%, transparent) 33%, transparent 42% 100%),
-    repeating-linear-gradient(96deg, transparent 0 42px, color-mix(in srgb, var(--accent-blue) 9%, transparent) 43px 45px, transparent 46px 88px);
-  clip-path: polygon(0 16%, 82% 0, 100% 82%, 10% 100%);
-  animation: depth-plane-drift 19s var(--ease) infinite alternate;
-}
-
-.cinema-depth-plane-two {
-  background:
-    radial-gradient(ellipse at 38% 32%, color-mix(in srgb, var(--accent-violet) 15%, transparent), transparent 28%),
-    linear-gradient(36deg, transparent 12%, color-mix(in srgb, var(--accent) 11%, transparent) 44%, transparent 66%);
-  clip-path: polygon(12% 0, 100% 22%, 74% 100%, 0 70%);
-  opacity: var(--scene-faint-opacity);
-  transform: translate3d(0, var(--depth-reverse), 0) rotate(7deg);
-  animation: depth-plane-drift-alt 23s var(--ease) infinite alternate;
-}
-
-.light-curtain {
-  inset: -8% -12%;
-  z-index: 3;
-  opacity: var(--scene-curtain-opacity);
-  background:
-    repeating-linear-gradient(104deg, transparent 0 54px, color-mix(in srgb, var(--accent-cool) 13%, transparent) 55px 57px, transparent 58px 112px),
-    linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-blue) 12%, transparent), transparent);
-  filter: none;
-  mix-blend-mode: normal;
-}
-
-.light-curtain-one {
-  transform: translate3d(0, var(--depth-shift), 0) skewX(-9deg);
-  animation: light-curtain-sweep 17s linear infinite;
-}
-
-.light-curtain-two {
-  opacity: var(--scene-curtain-soft-opacity);
-  transform: translate3d(0, var(--depth-reverse), 0) skewX(11deg);
-  animation: light-curtain-sweep-alt 21s linear infinite;
-}
-
-body[data-art-page] .grid-layer {
-  transform: translate3d(0, var(--depth-reverse), 0);
-}
-
-body[data-art-page] .light-layer {
-  opacity: var(--scene-opacity);
-  transform: translate3d(0, var(--depth-shift), 0) rotate(-8deg) scale(var(--cinema-scale));
-}
-
 .grid-layer,
 .light-layer,
 .grain-layer {
@@ -456,7 +350,7 @@ body[data-art-page] .light-layer {
   transform: translate3d(-14%, -12%, 0) rotate(-10deg);
   opacity: 0.22;
   background:
-    radial-gradient(circle at var(--pointer-x) var(--pointer-y), color-mix(in srgb, var(--accent-cool) 28%, transparent), transparent 18rem),
+    radial-gradient(circle at 50% 34%, color-mix(in srgb, var(--accent-cool) 28%, transparent), transparent 18rem),
     linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--accent-cool) 18%, transparent) 31%, color-mix(in srgb, var(--accent) 18%, transparent) 50%, color-mix(in srgb, var(--accent-violet) 12%, transparent) 62%, transparent 76%),
     linear-gradient(160deg, transparent 10%, rgba(255, 255, 255, 0.07) 45%, transparent 70%);
   filter: none;
@@ -479,10 +373,6 @@ body[data-art-page] .light-layer {
     linear-gradient(180deg, var(--bg), var(--bg-deep));
 }
 
-.legal-background .aurora-canvas {
-  opacity: 0.42;
-}
-
 .legal-background::before,
 .legal-background::after {
   opacity: 0.28;
@@ -490,10 +380,6 @@ body[data-art-page] .light-layer {
 
 .legal-background .light-layer {
   opacity: 0.36;
-}
-
-.visual-tier-static .aurora-canvas {
-  display: none;
 }
 
 .visual-tier-static .site-background::before,
@@ -511,8 +397,6 @@ body[data-art-page] .light-layer {
   animation: none;
 }
 
-.visual-tier-static .cinema-depth-plane,
-.visual-tier-static .light-curtain,
 .visual-tier-static .grain-layer {
   display: none;
 }
@@ -523,11 +407,6 @@ body[data-art-page] .light-layer {
   background-position: 50% 50%;
 }
 
-.visual-tier-balanced h1 {
-  animation: title-prism-soft 22s var(--ease) infinite alternate;
-  filter: none;
-}
-
 .visual-tier-balanced .site-background::before {
   animation: none;
 }
@@ -535,10 +414,6 @@ body[data-art-page] .light-layer {
 .visual-tier-balanced .site-background::after {
   opacity: 0.2;
   animation: none;
-}
-
-.visual-tier-balanced .aurora-canvas {
-  display: none;
 }
 
 .visual-tier-balanced .grid-layer {
@@ -551,80 +426,20 @@ body[data-art-page] .light-layer {
   animation: none;
 }
 
-.visual-tier-balanced .status-dot,
-.visual-tier-rich .status-dot {
+.visual-tier-balanced .status-dot {
   animation: signal-pulse 4.8s var(--ease) infinite;
 }
 
 .visual-tier-balanced .hero::before,
 .visual-tier-balanced .page-hero::before,
-.visual-tier-balanced .app-hero::before,
-.visual-tier-rich .hero::before,
-.visual-tier-rich .page-hero::before,
-.visual-tier-rich .app-hero::before {
+.visual-tier-balanced .app-hero::before {
   animation: line-scan 8.5s var(--ease) infinite;
 }
 
 .visual-tier-balanced .hero::after,
 .visual-tier-balanced .page-hero::after,
-.visual-tier-balanced .app-hero::after,
-.visual-tier-rich .hero::after,
-.visual-tier-rich .page-hero::after,
-.visual-tier-rich .app-hero::after {
+.visual-tier-balanced .app-hero::after {
   animation: prism-float 28s var(--ease) infinite alternate;
-}
-
-.visual-tier-rich h1 {
-  animation: title-prism-soft 14s var(--ease) infinite alternate;
-}
-
-.visual-tier-rich .site-background::before {
-  opacity: var(--scene-opacity);
-  animation: aurora-shear 34s var(--ease) infinite alternate;
-}
-
-.visual-tier-rich .site-background::after {
-  opacity: var(--scene-soft-opacity);
-  animation: refract-slide 42s linear infinite;
-}
-
-.visual-tier-rich .aurora-canvas {
-  opacity: 0.58;
-}
-
-.visual-tier-rich .cinema-depth-plane,
-.visual-tier-rich .light-curtain {
-  display: block;
-}
-
-.visual-tier-rich .cinema-depth-plane-one {
-  animation: depth-plane-drift 32s var(--ease) infinite alternate;
-}
-
-.visual-tier-rich .cinema-depth-plane-two {
-  animation: depth-plane-drift-alt 36s var(--ease) infinite alternate;
-}
-
-.visual-tier-rich .light-curtain-one {
-  animation: light-curtain-sweep 34s linear infinite;
-}
-
-.visual-tier-rich .light-curtain-two {
-  animation: light-curtain-sweep-alt 38s linear infinite;
-}
-
-.visual-tier-rich .grid-layer {
-  opacity: 0.42;
-  animation: grid-breathe 24s var(--ease) infinite alternate;
-}
-
-.visual-tier-rich .light-layer {
-  opacity: 0.34;
-  animation: slow-drift 32s var(--ease) infinite alternate;
-}
-
-.visual-tier-rich .app-icon {
-  animation: icon-breathe 10s var(--ease) infinite alternate;
 }
 
 .visual-tier-static .site-header,
@@ -646,23 +461,6 @@ body[data-art-page] .light-layer {
 .visual-tier-balanced .legal-document,
 .visual-tier-balanced .footer-grid {
   backdrop-filter: none;
-}
-
-@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .visual-tier-rich .site-header.is-scrolled,
-  .visual-tier-rich .site-header:focus-within {
-    backdrop-filter: blur(14px) saturate(118%);
-    -webkit-backdrop-filter: blur(14px) saturate(118%);
-  }
-
-  .visual-tier-rich .studio-panel,
-  .visual-tier-rich .glass-card,
-  .visual-tier-rich .feature-card,
-  .visual-tier-rich .contact-panel,
-  .visual-tier-rich .footer-grid {
-    backdrop-filter: blur(16px) saturate(118%);
-    -webkit-backdrop-filter: blur(16px) saturate(118%);
-  }
 }
 
 .site-header {
@@ -711,14 +509,17 @@ body[data-art-page] .light-layer {
   place-items: center;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
-  background:
-    radial-gradient(circle at 35% 22%, rgba(255, 255, 255, 0.28), transparent 18%),
-    linear-gradient(145deg, color-mix(in srgb, var(--accent-cool) 20%, transparent), color-mix(in srgb, var(--accent) 14%, transparent));
-  color: var(--accent-strong);
+  overflow: hidden;
+  background: var(--bg-elevated-strong);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.16),
     0 0 32px color-mix(in srgb, var(--accent-cool) 17%, transparent);
-  font-size: 0.95rem;
+}
+
+.brand-symbol img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .nav-links {
@@ -1055,7 +856,7 @@ p {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background:
-    radial-gradient(circle at var(--pointer-x) var(--pointer-y), color-mix(in srgb, var(--accent-cool) 12%, transparent), transparent 18rem),
+    radial-gradient(circle at 50% 28%, color-mix(in srgb, var(--accent-cool) 12%, transparent), transparent 18rem),
     linear-gradient(140deg, rgba(255, 255, 255, 0.08), transparent 32%, rgba(255, 255, 255, 0.035)),
     var(--bg-elevated);
   box-shadow:
@@ -1188,7 +989,7 @@ p {
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(circle at var(--pointer-x) var(--pointer-y), color-mix(in srgb, var(--accent-cool) 20%, transparent), transparent 18rem),
+    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--accent-cool) 20%, transparent), transparent 18rem),
     linear-gradient(132deg, color-mix(in srgb, var(--accent) 14%, transparent), transparent 36%, color-mix(in srgb, var(--accent-blue) 11%, transparent));
   opacity: 0.32;
   transition: opacity 220ms var(--ease), transform 220ms var(--ease);
@@ -1595,7 +1396,7 @@ p {
   border-radius: var(--radius);
   padding: 16px 18px;
   background:
-    radial-gradient(circle at var(--pointer-x) 0%, color-mix(in srgb, var(--accent-cool) 10%, transparent), transparent 18rem),
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent-cool) 10%, transparent), transparent 18rem),
     linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 46%),
     color-mix(in srgb, var(--bg-elevated) 82%, transparent);
   box-shadow:
@@ -1609,6 +1410,20 @@ p {
   flex-wrap: wrap;
   gap: 14px;
   row-gap: 8px;
+}
+
+.footer-identity {
+  display: grid;
+  gap: 2px;
+}
+
+.footer-identity p {
+  margin: 0;
+}
+
+.footer-identity span {
+  color: var(--text-soft);
+  font-size: 0.86rem;
 }
 
 .footer-links a {
@@ -1637,20 +1452,20 @@ p {
   transition-delay: 120ms;
 }
 
-body[data-art-page] [data-scene] {
+body[data-art-page] main > section {
   position: relative;
   isolation: isolate;
   background:
-    radial-gradient(ellipse at var(--pointer-x) 8%, color-mix(in srgb, var(--accent-cool) 6%, transparent), transparent 34rem),
+    radial-gradient(ellipse at 44% 8%, color-mix(in srgb, var(--accent-cool) 6%, transparent), transparent 34rem),
     linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent-blue) 4%, transparent) 48%, transparent);
 }
 
-body[data-art-page] [data-scene] > .container {
+body[data-art-page] main > section > .container {
   position: relative;
   z-index: 1;
 }
 
-body[data-art-page] [data-scene] > .container::before {
+body[data-art-page] main > section > .container::before {
   content: "";
   position: absolute;
   left: 0;
@@ -1663,8 +1478,10 @@ body[data-art-page] [data-scene] > .container::before {
   filter: drop-shadow(0 0 16px var(--glow-cool));
 }
 
-body[data-art-page] [data-cinematic-card] {
-  transform: translate3d(0, var(--card-drift), 0);
+body[data-art-page] .glass-card,
+body[data-art-page] .feature-card,
+body[data-art-page] .contact-panel,
+body[data-art-page] .studio-panel {
   box-shadow:
     var(--shadow),
     0 0 90px color-mix(in srgb, var(--accent-cool) 10%, transparent),
@@ -1672,14 +1489,9 @@ body[data-art-page] [data-cinematic-card] {
     inset 0 -1px 0 rgba(255, 255, 255, 0.04);
 }
 
-body[data-art-page] .glass-card[data-cinematic-card]:hover,
-body[data-art-page] .feature-card[data-cinematic-card]:hover {
-  transform: translate3d(0, calc(var(--card-drift) - 6px), 0);
-}
-
-body[data-art-page] .feature-card[data-cinematic-card] {
+body[data-art-page] .feature-card {
   background:
-    radial-gradient(circle at var(--pointer-x) var(--pointer-y), color-mix(in srgb, var(--accent-cool) 20%, transparent), transparent 22rem),
+    radial-gradient(circle at 50% 32%, color-mix(in srgb, var(--accent-cool) 20%, transparent), transparent 22rem),
     linear-gradient(108deg, rgba(255, 255, 255, 0.12), transparent 34%, rgba(124, 200, 255, 0.055)),
     var(--bg-elevated);
 }
@@ -1695,29 +1507,9 @@ body[data-art-page] .site-footer {
   background: transparent;
 }
 
-body[data-art-page] .site-footer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: var(--footer-glow);
-  pointer-events: none;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-cool) 14%, transparent), transparent);
-  filter: none;
-  mix-blend-mode: normal;
-}
-
 body[data-art-page] .footer-grid {
   position: relative;
   z-index: 1;
-}
-
-@keyframes slow-drift {
-  from {
-    transform: translate3d(-14%, -12%, 0) rotate(-10deg);
-  }
-  to {
-    transform: translate3d(7%, 6%, 0) rotate(-4deg);
-  }
 }
 
 @keyframes loader-light-sweep {
@@ -1751,35 +1543,6 @@ body[data-art-page] .footer-grid {
   }
 }
 
-@keyframes aurora-shear {
-  from {
-    transform: rotate(-8deg) translate3d(-2%, -1%, 0) scale(1.04);
-  }
-  to {
-    transform: rotate(-2deg) translate3d(3%, 2%, 0) scale(1.1);
-  }
-}
-
-@keyframes refract-slide {
-  from {
-    transform: translate3d(-5%, 2%, 0);
-  }
-  to {
-    transform: translate3d(5%, -1%, 0);
-  }
-}
-
-@keyframes grid-breathe {
-  from {
-    opacity: 0.34;
-    background-position: 0 0, 0 0, 0 0;
-  }
-  to {
-    opacity: 0.58;
-    background-position: 18px 10px, -14px 18px, 42px -30px;
-  }
-}
-
 @keyframes line-scan {
   0%,
   100% {
@@ -1789,26 +1552,6 @@ body[data-art-page] .footer-grid {
   45% {
     transform: scaleX(1);
     opacity: 0.82;
-  }
-}
-
-@keyframes title-prism {
-  from {
-    background-position: 0% 50%;
-    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent-cool) 10%, transparent));
-  }
-  to {
-    background-position: 100% 50%;
-    filter: drop-shadow(0 0 24px color-mix(in srgb, var(--accent) 16%, transparent));
-  }
-}
-
-@keyframes title-prism-soft {
-  from {
-    background-position: 0% 50%;
-  }
-  to {
-    background-position: 100% 50%;
   }
 }
 
@@ -1833,68 +1576,6 @@ body[data-art-page] .footer-grid {
     transform: rotate(-3deg) translate3d(-3%, 4%, 0);
     opacity: 0.72;
   }
-}
-
-@keyframes depth-plane-drift {
-  from {
-    background-position: 0 0, 0 0;
-    transform: translate3d(0, var(--depth-shift), 0) rotate(-2deg);
-  }
-  to {
-    background-position: 86px -42px, -54px 76px;
-    transform: translate3d(0, var(--depth-shift), 0) rotate(3deg);
-  }
-}
-
-@keyframes depth-plane-drift-alt {
-  from {
-    background-position: 0 0, 0 0;
-    transform: translate3d(0, var(--depth-reverse), 0) rotate(5deg);
-  }
-  to {
-    background-position: -70px 54px, 44px -36px;
-    transform: translate3d(0, var(--depth-reverse), 0) rotate(10deg);
-  }
-}
-
-@keyframes light-curtain-sweep {
-  from {
-    background-position: 0 0, 0 0;
-  }
-  to {
-    background-position: 160px -220px, 0 0;
-  }
-}
-
-@keyframes light-curtain-sweep-alt {
-  from {
-    background-position: 0 0, 0 0;
-  }
-  to {
-    background-position: -180px 180px, 0 0;
-  }
-}
-
-@keyframes icon-orbit {
-  from {
-    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 20%, transparent));
-  }
-  to {
-    filter: drop-shadow(0 0 26px color-mix(in srgb, var(--accent-cool) 36%, transparent));
-  }
-}
-
-@keyframes icon-breathe {
-  from {
-    transform: translateZ(0) scale(1);
-  }
-  to {
-    transform: translateZ(0) scale(1.025);
-  }
-}
-
-body.visual-tier-rich[data-art-page] .app-icon {
-  animation: icon-breathe 10s var(--ease) infinite alternate;
 }
 
 @supports (min-height: 100dvh) {
@@ -1994,10 +1675,6 @@ body.visual-tier-rich[data-art-page] .app-icon {
 }
 
 @media (min-width: 1921px), (min-height: 1201px) {
-  .aurora-canvas {
-    display: none;
-  }
-
   body[data-art-page] .site-background,
   body[data-art-page] .site-background::before,
   body[data-art-page] .site-background::after,
@@ -2137,10 +1814,6 @@ body.visual-tier-rich[data-art-page] .app-icon {
       radial-gradient(ellipse at 18% 4%, color-mix(in srgb, var(--accent-cool) 17%, transparent), transparent 34rem),
       radial-gradient(ellipse at 86% 22%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 26rem),
       linear-gradient(180deg, var(--bg), var(--bg-deep));
-  }
-
-  .aurora-canvas {
-    display: none;
   }
 
   .site-background {
@@ -2299,11 +1972,6 @@ body.visual-tier-rich[data-art-page] .app-icon {
     flex-direction: column;
   }
 
-  body[data-art-page] .cinema-depth-plane,
-  body[data-art-page] .light-curtain {
-    display: none;
-  }
-
   body[data-art-page] .site-background::before,
   body[data-art-page] .site-background::after {
     opacity: 0.26;
@@ -2330,29 +1998,17 @@ body.visual-tier-rich[data-art-page] .app-icon {
     animation: none;
   }
 
-  body[data-art-page] [data-cinematic-card] {
-    transform: none;
-    box-shadow:
-      0 18px 42px rgba(0, 0, 0, 0.34),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  }
-
-  body[data-art-page] .glass-card[data-cinematic-card]:hover,
-  body[data-art-page] .feature-card[data-cinematic-card]:hover {
-    transform: none;
-  }
-
-  body[data-art-page] .feature-card[data-cinematic-card] {
+  body[data-art-page] .feature-card {
     background:
       linear-gradient(135deg, rgba(255, 255, 255, 0.075), transparent 52%),
       var(--bg-elevated);
   }
 
-  body[data-art-page] [data-scene] {
+  body[data-art-page] main > section {
     background: none;
   }
 
-  body[data-art-page] [data-scene] > .container::before {
+  body[data-art-page] main > section > .container::before {
     opacity: 0.12;
     filter: none;
   }
@@ -2406,26 +2062,14 @@ body.visual-tier-rich[data-art-page] .app-icon {
     transition-duration: 120ms;
   }
 
-  .aurora-canvas {
-    opacity: 0.24;
-    transform: none;
-  }
-
   h1 {
     background-position: 50% 50%;
-  }
-
-  .cinema-depth-plane,
-  .light-curtain {
-    opacity: 0.12 !important;
-    transform: none !important;
   }
 
   body[data-art-page] .site-background::before,
   body[data-art-page] .site-background::after,
   body[data-art-page] .light-layer,
-  body[data-art-page] .grid-layer,
-  body[data-art-page] [data-cinematic-card] {
+  body[data-art-page] .grid-layer {
     transform: none !important;
   }
 }

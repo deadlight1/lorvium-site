@@ -19,7 +19,9 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Lorvium | Independent software studio">
     <meta name="twitter:description" content="Independent software for everyday use. Focused apps built with care, clarity, and respect for users.">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0c0e'/%3E%3Cpath d='M19 14h8v29h19v7H19z' fill='%23d8c58a'/%3E%3Cpath d='M34 14h11l-11 14z' fill='%23a9d6bd'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
     <script>document.documentElement.classList.add("has-js");</script>
     <link rel="stylesheet" href="/assets/styles.css">
     <script src="/assets/main.js" defer></script>
@@ -83,11 +85,6 @@
     </div>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="site-background" aria-hidden="true">
-      <canvas class="aurora-canvas" data-aurora aria-hidden="true"></canvas>
-      <span class="cinema-depth-plane cinema-depth-plane-one" data-depth="1" aria-hidden="true"></span>
-      <span class="cinema-depth-plane cinema-depth-plane-two" data-depth="2" aria-hidden="true"></span>
-      <span class="light-curtain light-curtain-one" data-depth="3" aria-hidden="true"></span>
-      <span class="light-curtain light-curtain-two" data-depth="4" aria-hidden="true"></span>
       <span class="grid-layer"></span>
       <span class="light-layer"></span>
       <span class="grain-layer"></span>
@@ -96,7 +93,7 @@
     <header class="site-header" data-site-header>
       <nav class="nav-shell" aria-label="Main navigation">
         <a class="brand-mark" href="/" aria-label="Lorvium home">
-          <span class="brand-symbol" aria-hidden="true">L</span>
+          <span class="brand-symbol" aria-hidden="true"><img src="/assets/lorvium-mark.svg" alt=""></span>
           <span>Lorvium</span>
         </a>
         <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primary-nav" data-nav-toggle>
@@ -113,7 +110,7 @@
     </header>
 
     <main id="main">
-      <section class="hero section-pad" data-scene="hero">
+      <section class="hero section-pad">
         <div class="container hero-clean">
           <div class="hero-copy reveal">
             <p class="eyebrow">Independent software studio</p>
@@ -131,7 +128,7 @@
         </div>
       </section>
 
-      <section class="section-pad" aria-labelledby="principles-title" data-scene="principles">
+      <section class="section-pad" aria-labelledby="principles-title">
         <div class="container">
           <div class="section-heading reveal">
             <p class="eyebrow">Principles</p>
@@ -142,22 +139,22 @@
             </p>
           </div>
           <div class="card-grid principles-grid">
-            <article class="glass-card reveal" data-cinematic-card>
+            <article class="glass-card reveal">
               <span class="card-index" aria-hidden="true">01</span>
               <h3>Focused by design</h3>
               <p>Each product starts with a clear job and avoids unnecessary surface area.</p>
             </article>
-            <article class="glass-card reveal" data-cinematic-card>
+            <article class="glass-card reveal">
               <span class="card-index" aria-hidden="true">02</span>
               <h3>Privacy-conscious</h3>
               <p>Data choices are treated as product decisions, not afterthoughts.</p>
             </article>
-            <article class="glass-card reveal" data-cinematic-card>
+            <article class="glass-card reveal">
               <span class="card-index" aria-hidden="true">03</span>
               <h3>Lightweight</h3>
               <p>Lorvium products should feel fast, stable, and respectful of device resources.</p>
             </article>
-            <article class="glass-card reveal" data-cinematic-card>
+            <article class="glass-card reveal">
               <span class="card-index" aria-hidden="true">04</span>
               <h3>Built for real use</h3>
               <p>Design and copy stay practical so support, updates, and policies are easy to trust.</p>
@@ -166,7 +163,7 @@
         </div>
       </section>
 
-      <section class="section-pad" aria-labelledby="apps-title" data-scene="apps">
+      <section class="section-pad" aria-labelledby="apps-title">
         <div class="container">
           <div class="section-heading reveal">
             <p class="eyebrow">Apps</p>
@@ -177,7 +174,7 @@
             </p>
           </div>
           <div class="app-stack">
-            <div class="feature-card app-feature reveal" data-cinematic-card data-card-link="/apps/minimal-alarm/">
+            <div class="feature-card app-feature reveal" data-card-link="/apps/minimal-alarm/">
               <div class="app-icon app-icon-logo" aria-hidden="true">
                 <img src="/assets/minimal-alarm-icon.svg" alt="">
               </div>
@@ -198,7 +195,7 @@
         </div>
       </section>
 
-      <section class="section-pad contact-section" id="contact" aria-labelledby="contact-title" data-scene="contact">
+      <section class="section-pad contact-section" id="contact" aria-labelledby="contact-title">
         <div class="container contact-grid">
           <div class="section-heading reveal">
             <p class="eyebrow">Contact</p>
@@ -208,7 +205,7 @@
               questions, and policy-related requests.
             </p>
           </div>
-          <div class="contact-panel reveal" data-cinematic-card>
+          <div class="contact-panel reveal">
             <a class="contact-row" href="mailto:support@lorvium.com">
               <span>Studio support</span>
               <strong>support@lorvium.com</strong>
@@ -224,7 +221,10 @@
 
     <footer class="site-footer">
       <div class="container footer-grid">
-        <p>&copy; <span data-current-year>2026</span> Lorvium. All rights reserved.</p>
+        <div class="footer-identity">
+          <p>&copy; <span data-current-year>2026</span> Lorvium. All rights reserved.</p>
+          <span>Independent software studio.</span>
+        </div>
         <div class="footer-links" aria-label="Footer links">
           <a href="/">Home</a>
           <a href="/apps/">Apps</a>

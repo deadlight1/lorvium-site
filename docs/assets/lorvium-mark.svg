@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Lorvium mark</title>
+  <desc id="desc">A premium Lorvium monogram with an L over a dark liquid glass field.</desc>
+  <defs>
+    <linearGradient id="field" x1="68" y1="52" x2="444" y2="470" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#183631"/>
+      <stop offset="0.46" stop-color="#071214"/>
+      <stop offset="1" stop-color="#020304"/>
+    </linearGradient>
+    <linearGradient id="stroke" x1="126" y1="110" x2="384" y2="386" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#78f2d3"/>
+      <stop offset="0.58" stop-color="#f6f3ea"/>
+      <stop offset="1" stop-color="#ffe6a0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="33%" cy="24%" r="68%">
+      <stop offset="0" stop-color="#78f2d3" stop-opacity="0.62"/>
+      <stop offset="0.55" stop-color="#78f2d3" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#78f2d3" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#field)"/>
+  <rect x="1.5" y="1.5" width="509" height="509" rx="110.5" fill="none" stroke="#dffff6" stroke-opacity="0.2" stroke-width="3"/>
+  <path d="M42 42h428v428H42z" fill="url(#glow)" opacity="0.72"/>
+  <path d="M173 126h62v199h126v58H173z" fill="url(#stroke)"/>
+  <path d="M282 126h84L282 232z" fill="#ffe6a0" opacity="0.92"/>
+</svg>
