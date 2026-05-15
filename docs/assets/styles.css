@@ -685,13 +685,14 @@ h2,
 h3 {
   margin: 0;
   color: var(--text);
-  line-height: 1.04;
+  line-height: 1.08;
   font-weight: 720;
   letter-spacing: 0;
 }
 
 h1 {
   max-width: 12ch;
+  padding-bottom: 0.08em;
   font-size: clamp(4rem, 12vw, 8rem);
   background:
     linear-gradient(110deg, #ffffff 0%, var(--text) 26%, var(--accent-cool) 52%, var(--accent-strong) 76%, #ffffff 100%);
