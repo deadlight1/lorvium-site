@@ -1043,6 +1043,10 @@ p {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.three-column {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .glass-card {
   min-height: 226px;
   position: relative;
@@ -1875,6 +1879,7 @@ body[data-art-page] .footer-grid {
   }
 
   .principles-grid,
+  .three-column,
   .two-column {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2006,6 +2011,7 @@ body[data-art-page] .footer-grid {
   }
 
   .principles-grid,
+  .three-column,
   .two-column {
     grid-template-columns: 1fr;
   }
