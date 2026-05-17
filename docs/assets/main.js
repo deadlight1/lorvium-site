@@ -9,6 +9,7 @@
   var yearNodes = document.querySelectorAll("[data-current-year]");
   var revealNodes = document.querySelectorAll(".reveal");
   var cardLinkNodes = document.querySelectorAll("[data-card-link]");
+  var mailLinkNodes = document.querySelectorAll("a[href^='mailto:']");
   var pageLoader = document.querySelector("[data-page-loader]");
   var motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   var compactQuery = window.matchMedia("(max-width: 760px)");
@@ -155,6 +156,235 @@
     });
   }
 
+  function getMailAddress(link) {
+    var href = link.getAttribute("href") || "";
+    var rawAddress = href.replace(/^mailto:/i, "").split("?")[0].trim();
+
+    try {
+      return decodeURIComponent(rawAddress);
+    } catch (error) {
+      return rawAddress;
+    }
+  }
+
+  function shouldCopyMailLink(link, email) {
+    if (!email || link.dataset.copyEnhanced === "true") {
+      return false;
+    }
+
+    return link.classList.contains("contact-row") || (link.textContent || "").indexOf("@") !== -1;
+  }
+
+  function canUseClipboardApi() {
+    return Boolean(
+      window.navigator &&
+        window.navigator.clipboard &&
+        typeof window.navigator.clipboard.writeText === "function"
+    );
+  }
+
+  function copyWithTextarea(text) {
+    if (typeof document.execCommand !== "function") {
+      return false;
+    }
+
+    var input = document.createElement("textarea");
+    input.value = text;
+    input.setAttribute("readonly", "");
+    input.setAttribute("aria-hidden", "true");
+    input.style.position = "fixed";
+    input.style.left = "0";
+    input.style.top = "0";
+    input.style.width = "1px";
+    input.style.height = "1px";
+    input.style.padding = "0";
+    input.style.border = "0";
+    input.style.opacity = "0";
+    input.style.pointerEvents = "none";
+    input.style.fontSize = "16px";
+    body.appendChild(input);
+    input.focus();
+    input.select();
+    input.setSelectionRange(0, input.value.length);
+
+    try {
+      return document.execCommand("copy");
+    } catch (error) {
+      return false;
+    } finally {
+      body.removeChild(input);
+    }
+  }
+
+  function copyWithSelection(text) {
+    if (typeof document.execCommand !== "function" || typeof window.getSelection !== "function") {
+      return false;
+    }
+
+    var selection = window.getSelection();
+    var range = document.createRange();
+    var node = document.createElement("span");
+    node.textContent = text;
+    node.setAttribute("aria-hidden", "true");
+    node.style.position = "fixed";
+    node.style.left = "0";
+    node.style.top = "0";
+    node.style.opacity = "0";
+    node.style.pointerEvents = "none";
+    body.appendChild(node);
+    range.selectNodeContents(node);
+
+    try {
+      selection.removeAllRanges();
+      selection.addRange(range);
+      return document.execCommand("copy");
+    } catch (error) {
+      return false;
+    } finally {
+      selection.removeAllRanges();
+      body.removeChild(node);
+    }
+  }
+
+  function writeClipboardText(text) {
+    if (copyWithTextarea(text) || copyWithSelection(text)) {
+      return Promise.resolve();
+    }
+
+    if (canUseClipboardApi()) {
+      return window.navigator.clipboard.writeText(text);
+    }
+
+    return Promise.reject(new Error("copy unavailable"));
+  }
+
+  function selectTextNode(node) {
+    if (typeof window.getSelection !== "function") {
+      return;
+    }
+
+    var selection = window.getSelection();
+    var range = document.createRange();
+    range.selectNodeContents(node);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
+  var copyResetTimer = 0;
+  var toastResetTimer = 0;
+  var activeCopyLink = null;
+  var copyToast = null;
+
+  function getCopyToast() {
+    if (copyToast) {
+      return copyToast;
+    }
+
+    copyToast = document.createElement("div");
+    copyToast.className = "email-copy-toast";
+    copyToast.setAttribute("role", "status");
+    copyToast.setAttribute("aria-live", "polite");
+    body.appendChild(copyToast);
+
+    return copyToast;
+  }
+
+  function showCopyToast(target, message) {
+    var toast = getCopyToast();
+    var targetRect = target.getBoundingClientRect();
+
+    toast.textContent = message;
+    toast.classList.add("is-visible");
+
+    var toastRect = toast.getBoundingClientRect();
+    var left = targetRect.left + targetRect.width / 2 - toastRect.width / 2;
+    var top = targetRect.top - toastRect.height - 10;
+
+    left = Math.max(12, Math.min(window.innerWidth - toastRect.width - 12, left));
+
+    if (top < 12) {
+      top = targetRect.bottom + 10;
+    }
+
+    toast.style.left = left + "px";
+    toast.style.top = Math.max(12, top) + "px";
+
+    window.clearTimeout(toastResetTimer);
+    toastResetTimer = window.setTimeout(function () {
+      toast.classList.remove("is-visible");
+    }, 1600);
+  }
+
+  function initMailCopy() {
+    mailLinkNodes.forEach(function (link) {
+      var email = getMailAddress(link);
+
+      if (!shouldCopyMailLink(link, email)) {
+        return;
+      }
+
+      link.dataset.copyEnhanced = "true";
+
+      var copyTarget = document.createElement("button");
+      copyTarget.type = "button";
+      copyTarget.className = (link.className ? link.className + " " : "") + "email-copy-link";
+      copyTarget.innerHTML = link.innerHTML;
+      copyTarget.setAttribute("aria-label", "Copy " + email);
+      copyTarget.setAttribute("title", "Copy email address");
+      link.parentNode.replaceChild(copyTarget, link);
+
+      var copyStartedAt = 0;
+
+      function copyEmail(event) {
+        event.preventDefault();
+        copyStartedAt = Date.now();
+
+        writeClipboardText(email)
+          .then(function () {
+            window.clearTimeout(copyResetTimer);
+            if (activeCopyLink && activeCopyLink !== copyTarget) {
+              activeCopyLink.classList.remove("is-copied");
+            }
+            activeCopyLink = copyTarget;
+            copyTarget.classList.add("is-copied");
+            showCopyToast(copyTarget, "Email copied");
+            copyResetTimer = window.setTimeout(function () {
+              copyTarget.classList.remove("is-copied");
+              if (activeCopyLink === copyTarget) {
+                activeCopyLink = null;
+              }
+            }, 1600);
+          })
+          .catch(function () {
+            selectTextNode(copyTarget);
+            showCopyToast(copyTarget, "Press Ctrl+C to copy");
+          });
+      }
+
+      copyTarget.addEventListener("pointerdown", function (event) {
+        if (typeof event.button === "number" && event.button !== 0) {
+          return;
+        }
+
+        copyEmail(event);
+      });
+
+      copyTarget.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        if (Date.now() - copyStartedAt > 600) {
+          copyEmail(event);
+        }
+      });
+
+      copyTarget.addEventListener("keydown", function (event) {
+        if (event.key === " " || event.key === "Enter") {
+          copyEmail(event);
+        }
+      });
+    });
+  }
+
   function revealContent() {
     if (!revealNodes.length) {
       return;
@@ -189,6 +419,7 @@
   setYear();
   setHeaderState();
   initCardLinks();
+  initMailCopy();
   revealContent();
   addModeChangeListener(applyVisualMode);
 
