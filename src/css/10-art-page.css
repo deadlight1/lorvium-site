@@ -1,0 +1,61 @@
+}
+
+body[data-art-page] main > section {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 44% 8%, color-mix(in srgb, var(--accent-cool) 6%, transparent), transparent 34rem),
+    linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent-blue) 4%, transparent) 48%, transparent);
+}
+
+body[data-art-page] main > section > .container {
+  position: relative;
+  z-index: 1;
+}
+
+body[data-art-page] main > section > .container::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -22px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-cool) 34%, transparent), color-mix(in srgb, var(--accent) 20%, transparent), transparent);
+  opacity: var(--scene-faint-opacity);
+  pointer-events: none;
+  filter: drop-shadow(0 0 16px var(--glow-cool));
+}
+
+body[data-art-page] .glass-card,
+body[data-art-page] .feature-card,
+body[data-art-page] .contact-panel,
+body[data-art-page] .studio-panel {
+  box-shadow:
+    var(--shadow),
+    0 0 90px color-mix(in srgb, var(--accent-cool) 10%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+body[data-art-page] .feature-card {
+  background:
+    radial-gradient(circle at 50% 32%, color-mix(in srgb, var(--accent-cool) 20%, transparent), transparent 22rem),
+    linear-gradient(108deg, rgba(255, 255, 255, 0.12), transparent 34%, rgba(124, 200, 255, 0.055)),
+    var(--bg-elevated);
+}
+
+body[data-art-page] .app-icon {
+  transform: translateZ(0);
+  animation: none;
+}
+
+body[data-art-page] .site-footer {
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+}
+
+body[data-art-page] .footer-grid {
+  position: relative;
+  z-index: 1;
+}
