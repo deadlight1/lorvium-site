@@ -1,0 +1,14 @@
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity var(--motion-reveal) var(--ease), transform var(--motion-reveal) var(--ease);
+}
+
+.reveal-delay.is-visible {
+  transition-delay: 120ms;

@@ -1,0 +1,184 @@
+
+.site-background {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 16% 18%, color-mix(in srgb, var(--accent-cool) 22%, transparent), transparent 34%),
+    radial-gradient(ellipse at 82% 8%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 32%),
+    radial-gradient(ellipse at 54% 92%, color-mix(in srgb, var(--accent-blue) 13%, transparent), transparent 38%),
+    linear-gradient(180deg, var(--bg), var(--bg-deep));
+  isolation: isolate;
+  contain: paint;
+}
+
+.site-background::before,
+.site-background::after {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.site-background::before {
+  opacity: 0.5;
+  background:
+    conic-gradient(from 122deg at 46% 34%, transparent 0 18%, color-mix(in srgb, var(--accent-cool) 20%, transparent) 24%, transparent 36% 53%, color-mix(in srgb, var(--accent-violet) 14%, transparent) 61%, transparent 76%),
+    linear-gradient(105deg, transparent 8%, color-mix(in srgb, var(--accent-blue) 12%, transparent) 34%, transparent 62%);
+  filter: none;
+  transform: rotate(-7deg) scale(1.04);
+  animation: none;
+}
+
+.site-background::after {
+  opacity: 0.24;
+  background:
+    repeating-linear-gradient(118deg, transparent 0 34px, color-mix(in srgb, var(--accent-cool) 7%, transparent) 35px 36px, transparent 37px 78px),
+    linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--accent) 11%, transparent) 44%, transparent 76%);
+  filter: none;
+  mix-blend-mode: normal;
+  transform: none;
+  animation: none;
+}
+
+.grid-layer,
+.light-layer,
+.grain-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.grid-layer {
+  z-index: 2;
+  opacity: 0.28;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--accent-cool) 13%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(118deg, transparent 0 48%, color-mix(in srgb, var(--accent-blue) 7%, transparent) 49% 50%, transparent 51% 100%);
+  background-size: 54px 54px, 54px 54px, 160px 160px;
+  mask-image:
+    radial-gradient(ellipse at 50% 18%, rgba(0, 0, 0, 0.96), transparent 72%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.95), transparent 88%);
+  animation: none;
+}
+
+.light-layer {
+  z-index: 3;
+  transform: translate3d(-14%, -12%, 0) rotate(-10deg);
+  opacity: 0.22;
+  background:
+    radial-gradient(circle at 50% 34%, color-mix(in srgb, var(--accent-cool) 28%, transparent), transparent 18rem),
+    linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--accent-cool) 18%, transparent) 31%, color-mix(in srgb, var(--accent) 18%, transparent) 50%, color-mix(in srgb, var(--accent-violet) 12%, transparent) 62%, transparent 76%),
+    linear-gradient(160deg, transparent 10%, rgba(255, 255, 255, 0.07) 45%, transparent 70%);
+  filter: none;
+  animation: none;
+}
+
+.grain-layer {
+  z-index: 4;
+  opacity: 0.16;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.026) 0 1px, transparent 1px 7px);
+  mix-blend-mode: normal;
+}
+
+.legal-background {
+  background:
+    radial-gradient(ellipse at 18% 20%, color-mix(in srgb, var(--accent-cool) 13%, transparent), transparent 36%),
+    radial-gradient(ellipse at 78% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 36%),
+    linear-gradient(180deg, var(--bg), var(--bg-deep));
+}
+
+.legal-background::before,
+.legal-background::after {
+  opacity: 0.28;
+}
+
+.legal-background .light-layer {
+  opacity: 0.36;
+}
+
+.visual-tier-static .site-background::before,
+.visual-tier-static .site-background::after,
+.visual-tier-static .grid-layer,
+.visual-tier-static .light-layer,
+.visual-tier-static .status-dot,
+.visual-tier-static .app-icon,
+.visual-tier-static .hero::before,
+.visual-tier-static .page-hero::before,
+.visual-tier-static .app-hero::before,
+.visual-tier-static .hero::after,
+.visual-tier-static .page-hero::after,
+.visual-tier-static .app-hero::after {
+  animation: none;
+}
+
+.visual-tier-static .grain-layer {
+  display: none;
+}
+
+.visual-tier-static h1 {
+  animation: none;
+  filter: none;
+  background-position: 50% 50%;
+}
+
+.visual-tier-balanced .site-background::before {
+  animation: none;
+}
+
+.visual-tier-balanced .site-background::after {
+  opacity: 0.2;
+  animation: none;
+}
+
+.visual-tier-balanced .grid-layer {
+  opacity: 0.24;
+  animation: none;
+}
+
+.visual-tier-balanced .light-layer {
+  opacity: 0.24;
+  animation: none;
+}
+
+.visual-tier-balanced .status-dot {
+  animation: signal-pulse 4.8s var(--ease) infinite;
+}
+
+.visual-tier-balanced .hero::before,
+.visual-tier-balanced .page-hero::before,
+.visual-tier-balanced .app-hero::before {
+  animation: line-scan 8.5s var(--ease) infinite;
+}
+
+.visual-tier-balanced .hero::after,
+.visual-tier-balanced .page-hero::after,
+.visual-tier-balanced .app-hero::after {
+  animation: prism-float 28s var(--ease) infinite alternate;
+}
+
+.visual-tier-static .site-header,
+.visual-tier-static .nav-shell,
+.visual-tier-static .studio-panel,
+.visual-tier-static .glass-card,
+.visual-tier-static .feature-card,
+.visual-tier-static .contact-panel,
+.visual-tier-static .legal-summary,
+.visual-tier-static .legal-document,
+.visual-tier-static .footer-grid,
+.visual-tier-balanced .site-header,
+.visual-tier-balanced .nav-shell,
+.visual-tier-balanced .studio-panel,
+.visual-tier-balanced .glass-card,
+.visual-tier-balanced .feature-card,
+.visual-tier-balanced .contact-panel,
+.visual-tier-balanced .legal-summary,
+.visual-tier-balanced .legal-document,
+.visual-tier-balanced .footer-grid {
+  backdrop-filter: none;
+}

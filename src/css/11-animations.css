@@ -1,0 +1,46 @@
+
+@keyframes loader-light-sweep {
+  from {
+    transform: rotate(-7deg) translate3d(-2%, -1%, 0);
+    opacity: 0.34;
+  }
+  to {
+    transform: rotate(-3deg) translate3d(3%, 2%, 0);
+    opacity: 0.58;
+  }
+}
+
+@keyframes line-scan {
+  0%,
+  100% {
+    transform: scaleX(0.18);
+    opacity: 0.2;
+  }
+  45% {
+    transform: scaleX(1);
+    opacity: 0.82;
+  }
+}
+
+@keyframes signal-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.86;
+  }
+  50% {
+    transform: scale(1.22);
+    opacity: 1;
+  }
+}
+
+@keyframes prism-float {
+  from {
+    transform: rotate(-8deg) translate3d(0, 0, 0);
+    opacity: 0.44;
+  }
+  to {
+    transform: rotate(-3deg) translate3d(-3%, 4%, 0);
+    opacity: 0.72;
+  }
+}

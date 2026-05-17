@@ -21,6 +21,18 @@ Static website for Lorvium, an independent software studio. The site is built fo
 - All internal links should use root-relative paths, such as `/apps/minimal-alarm/`.
 - Everything needed for deployment must live under `docs/`.
 
+## Build
+
+CSS is authored as numbered modules in `src/css/` and JavaScript in `src/js/main.js`. `docs/assets/styles.css` and `docs/assets/main.js` are generated artifacts checked into the repo so GitHub Pages can serve them without a build step.
+
+After editing anything in `src/`, run:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1
+```
+
+The script concatenates the CSS modules, copies the JS, computes SHA8 hashes, and stamps the `?v=` query in every HTML so cached assets bust on change. It is idempotent — running it twice in a row leaves the working tree clean.
+
 ## DNS Checklist
 
 For GitHub Pages apex domain support, configure DNS with:
