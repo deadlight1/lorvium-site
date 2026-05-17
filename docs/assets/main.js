@@ -216,13 +216,35 @@ function runWowLoader(canvas) {
 
     const BUILD_END = 700;
     const HOLD_END = 1100;
-    const BLOOM_END = 1400;
 
     return new Promise(function (resolve) {
       const startedAt = performance.now();
 
+      function drawFinalFrame() {
+        // crisp, trail-free portrait at the HOLD position — this is what
+        // CSS slides down during the descend phase
+        ctx.globalCompositeOperation = "source-over";
+        ctx.clearRect(0, 0, cssW, cssH);
+        ctx.globalCompositeOperation = "lighter";
+        ctx.globalAlpha = 1;
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          const sprite = sprites[p.palIdx];
+          const sw = sprite.width * p.scale;
+          const sh = sprite.height * p.scale;
+          ctx.drawImage(sprite, p.tx - sw / 2, p.ty - sh / 2, sw, sh);
+        }
+        ctx.globalAlpha = 1;
+      }
+
       function frame(now) {
         const t = now - startedAt;
+
+        if (t >= HOLD_END) {
+          drawFinalFrame();
+          resolve();
+          return;
+        }
 
         // trail fade
         ctx.globalCompositeOperation = "destination-out";
@@ -230,17 +252,12 @@ function runWowLoader(canvas) {
         ctx.fillRect(0, 0, cssW, cssH);
         ctx.globalCompositeOperation = "lighter";
 
-        let bloomT = 0;
-        if (t > HOLD_END) {
-          bloomT = Math.min(1, (t - HOLD_END) / (BLOOM_END - HOLD_END));
-        }
-
-        // expanding glow rings (build-end through bloom)
-        if (t > BUILD_END - 200 && t < BLOOM_END) {
+        // expanding glow rings during HOLD
+        if (t > BUILD_END - 200) {
           for (let r = 0; r < 3; r++) {
             const phase = ((t - (BUILD_END - 200)) / 520 + r / 3) % 1;
             const radius = markSize * 0.18 + phase * markSize * 0.7;
-            const alpha = (1 - phase) * 0.32 * (1 - bloomT * 0.6);
+            const alpha = (1 - phase) * 0.32;
             if (alpha <= 0) continue;
             ctx.beginPath();
             ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
@@ -252,7 +269,7 @@ function runWowLoader(canvas) {
           ctx.globalAlpha = 1;
         }
 
-        // particles
+        // particles: BUILD then HOLD
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
           const local = Math.max(0, t - p.delay);
@@ -266,17 +283,12 @@ function runWowLoader(canvas) {
             x = p.ox + (p.tx - p.ox) * e;
             y = p.oy + (p.ty - p.oy) * e;
             alpha = Math.min(1, k * 1.8);
-          } else if (t < HOLD_END) {
+          } else {
             const drift = Math.sin(t / 220 + p.phase) * 1.4;
             const drift2 = Math.cos(t / 280 + p.phase * 1.3) * 1.4;
             x = p.tx + drift;
             y = p.ty + drift2;
             alpha = 1;
-          } else {
-            const burst = Math.pow(bloomT, 1.4) * 220;
-            x = p.tx + p.bdx * burst;
-            y = p.ty + p.bdy * burst;
-            alpha = Math.max(0, 1 - bloomT * 1.1);
           }
 
           p.x = x;
@@ -336,11 +348,7 @@ function runWowLoader(canvas) {
           ctx.globalAlpha = 1;
         }
 
-        if (t < BLOOM_END) {
-          window.requestAnimationFrame(frame);
-        } else {
-          resolve();
-        }
+        window.requestAnimationFrame(frame);
       }
 
       window.requestAnimationFrame(frame);
@@ -381,7 +389,23 @@ function initPageLoader() {
     if (done) return;
     done = true;
     markLoaderSeen();
-    dismissLoader(520);
+
+    // Unveil: dissolve the loader background so the loaded page shows through
+    pageLoader.classList.add("is-revealing");
+
+    // Descend: slide the canvas (now a crisp portrait of the brand mark) down
+    window.setTimeout(function () {
+      if (canvas) canvas.classList.add("is-descending");
+    }, 280);
+
+    // Remove DOM after descend completes (280 unveil + 720 descend + small buffer)
+    window.setTimeout(function () {
+      root.classList.add("is-loaded");
+      root.classList.add("loader-done");
+      if (pageLoader.parentNode) {
+        pageLoader.parentNode.removeChild(pageLoader);
+      }
+    }, 1040);
   }
 
   runWowLoader(canvas).then(finish, finish);
