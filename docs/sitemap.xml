@@ -25,6 +25,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://lorvium.com/terms-of-use/</loc>
+    <lastmod>2026-05-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://lorvium.com/apps/minimal-alarm/</loc>
     <lastmod>2026-05-17</lastmod>
     <changefreq>monthly</changefreq>
