@@ -11,12 +11,12 @@
   place-items: center;
   overflow: hidden;
   background:
-    linear-gradient(112deg, transparent 0 18%, color-mix(in srgb, var(--accent-cool) 10%, transparent) 34%, transparent 58%),
-    linear-gradient(154deg, color-mix(in srgb, var(--accent-blue) 10%, transparent), transparent 42%, color-mix(in srgb, var(--accent) 8%, transparent)),
-    linear-gradient(180deg, #030506, #000203);
+    radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--accent-cool) 12%, transparent), transparent 38%),
+    linear-gradient(112deg, transparent 0 18%, color-mix(in srgb, var(--accent-cool) 8%, transparent) 34%, transparent 58%),
+    linear-gradient(154deg, color-mix(in srgb, var(--accent-blue) 8%, transparent), transparent 42%, color-mix(in srgb, var(--accent) 6%, transparent));
   opacity: 1;
   visibility: visible;
-  pointer-events: auto;
+  pointer-events: none;
   transition: opacity var(--motion-slow) var(--ease), visibility var(--motion-slow) var(--ease);
 }
 
@@ -32,14 +32,16 @@
   background:
     repeating-linear-gradient(112deg, transparent 0 42px, color-mix(in srgb, var(--accent-cool) 8%, transparent) 43px 44px, transparent 45px 92px),
     linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-blue) 10%, transparent), transparent);
-  opacity: 0.28;
+  opacity: 0.22;
+  mix-blend-mode: screen;
 }
 
 .has-js .page-loader::after {
   background:
     linear-gradient(120deg, transparent 0 24%, color-mix(in srgb, var(--accent-cool) 16%, transparent) 39%, transparent 54%),
     linear-gradient(80deg, transparent 0 36%, color-mix(in srgb, var(--accent) 12%, transparent) 48%, transparent 62%);
-  opacity: 0.52;
+  opacity: 0.4;
+  mix-blend-mode: screen;
   transform: rotate(-6deg);
   animation: loader-light-sweep 1450ms var(--ease) infinite alternate;
 }
@@ -53,6 +55,8 @@
   display: block;
   transform: translateY(0);
   opacity: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
   will-change: transform, opacity;
 }
 

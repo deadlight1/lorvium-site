@@ -6,7 +6,7 @@ const navMenu = document.querySelector("[data-nav-menu]");
 const yearNodes = document.querySelectorAll("[data-current-year]");
 const revealNodes = document.querySelectorAll(".reveal");
 const cardLinkNodes = document.querySelectorAll("[data-card-link]");
-const mailLinkNodes = document.querySelectorAll("a[href^='mailto:']");
+const mailCopyNodes = document.querySelectorAll("[data-copy-email]");
 const pageLoader = document.querySelector("[data-page-loader]");
 const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 const compactQuery = window.matchMedia("(max-width: 760px)");
@@ -41,6 +41,11 @@ function addModeChangeListener(callback) {
 // === wow loader (canvas) ===
 
 const LOADER_SEEN_KEY = "lorvium-loader-v1";
+const LOADER_TOTAL_MS = 3000;
+const LOADER_REVEAL_MS = 280;
+const LOADER_DESCEND_MS = 720;
+const LOADER_EXIT_BUFFER_MS = 40;
+const LOADER_EXIT_MS = LOADER_REVEAL_MS + LOADER_DESCEND_MS + LOADER_EXIT_BUFFER_MS;
 
 function readToken(name, fallback) {
   const raw = getComputedStyle(root).getPropertyValue(name).trim();
@@ -61,6 +66,17 @@ function markLoaderSeen() {
   } catch (error) {
     /* privacy mode — ignore */
   }
+}
+
+function afterFirstPaint(callback) {
+  if (typeof window.requestAnimationFrame !== "function") {
+    window.setTimeout(callback, 0);
+    return;
+  }
+
+  window.requestAnimationFrame(function () {
+    window.requestAnimationFrame(callback);
+  });
 }
 
 function dismissLoader(holdMs) {
@@ -362,41 +378,40 @@ function initPageLoader() {
   }
 
   const canvas = pageLoader.querySelector("[data-loader-canvas]");
-  const skipWow = motionQuery.matches || hasSeenLoader() || !canvas || !canvas.getContext;
+  const isLegalPage = Boolean(document.querySelector(".legal-background"));
+  const canUseCanvas = Boolean(canvas && typeof canvas.getContext === "function");
+  const skipWow =
+    motionQuery.matches ||
+    compactQuery.matches ||
+    coarseQuery.matches ||
+    isLegalPage ||
+    hasSeenLoader() ||
+    !canUseCanvas;
 
   if (skipWow) {
     const minVisible = motionQuery.matches ? 80 : 200;
-    let fired = false;
-    function startFade() {
-      if (fired) return;
-      fired = true;
+    afterFirstPaint(function () {
       const elapsed = Date.now() - loaderStartedAt;
       window.setTimeout(function () {
         dismissLoader(motionQuery.matches ? 140 : 320);
       }, Math.max(0, minVisible - elapsed));
-    }
-    if (document.readyState === "complete") {
-      startFade();
-    } else {
-      window.addEventListener("load", startFade, { once: true });
-    }
-    window.setTimeout(startFade, 600);
+    });
     return;
   }
 
   let done = false;
-  function finish() {
+  function startExit() {
     if (done) return;
     done = true;
     markLoaderSeen();
 
-    // Unveil: dissolve the loader background so the loaded page shows through
+    // Unveil: dissolve the decorative layers while the page remains interactive.
     pageLoader.classList.add("is-revealing");
 
     // Descend: slide the canvas (now a crisp portrait of the brand mark) down
     window.setTimeout(function () {
       if (canvas) canvas.classList.add("is-descending");
-    }, 280);
+    }, LOADER_REVEAL_MS);
 
     // Remove DOM after descend completes (280 unveil + 720 descend + small buffer)
     window.setTimeout(function () {
@@ -405,12 +420,17 @@ function initPageLoader() {
       if (pageLoader.parentNode) {
         pageLoader.parentNode.removeChild(pageLoader);
       }
-    }, 1040);
+    }, LOADER_EXIT_MS);
   }
 
-  runWowLoader(canvas).then(finish, finish);
-  // safety net in case the scene gets stuck
-  window.setTimeout(finish, 3200);
+  afterFirstPaint(function () {
+    runWowLoader(canvas).catch(function () {
+      /* Keep the lightweight decorative layer until the normal 3s exit. */
+    });
+  });
+
+  const elapsed = Date.now() - loaderStartedAt;
+  window.setTimeout(startExit, Math.max(0, LOADER_TOTAL_MS - LOADER_EXIT_MS - elapsed));
 }
 
 function setHeaderState() {
@@ -484,25 +504,6 @@ function initCardLinks() {
       }
     });
   });
-}
-
-function getMailAddress(link) {
-  const href = link.getAttribute("href") || "";
-  const rawAddress = href.replace(/^mailto:/i, "").split("?")[0].trim();
-
-  try {
-    return decodeURIComponent(rawAddress);
-  } catch (error) {
-    return rawAddress;
-  }
-}
-
-function shouldCopyMailLink(link, email) {
-  if (!email || link.dataset.copyEnhanced === "true") {
-    return false;
-  }
-
-  return link.classList.contains("contact-row") || (link.textContent || "").indexOf("@") !== -1;
 }
 
 function canUseClipboardApi() {
@@ -605,6 +606,15 @@ let toastResetTimer = 0;
 let activeCopyLink = null;
 let copyToast = null;
 
+function getCopyEmail(button) {
+  return (button.getAttribute("data-copy-email") || "").trim();
+}
+
+function getCopySelectionTarget(button) {
+  const container = button.closest(".email-copy-control, .contact-row");
+  return (container && container.querySelector(".email-address")) || button;
+}
+
 function getCopyToast() {
   if (copyToast) {
     return copyToast;
@@ -646,22 +656,19 @@ function showCopyToast(target, message) {
 }
 
 function initMailCopy() {
-  mailLinkNodes.forEach(function (link) {
-    const email = getMailAddress(link);
+  mailCopyNodes.forEach(function (copyTarget) {
+    const email = getCopyEmail(copyTarget);
 
-    if (!shouldCopyMailLink(link, email)) {
+    if (!email || copyTarget.dataset.copyEnhanced === "true") {
       return;
     }
 
-    link.dataset.copyEnhanced = "true";
-
-    const copyTarget = document.createElement("button");
-    copyTarget.type = "button";
-    copyTarget.className = (link.className ? link.className + " " : "") + "email-copy-link";
-    copyTarget.innerHTML = link.innerHTML;
-    copyTarget.setAttribute("aria-label", "Copy " + email);
+    copyTarget.dataset.copyEnhanced = "true";
+    copyTarget.setAttribute("type", "button");
+    if (!copyTarget.getAttribute("aria-label")) {
+      copyTarget.setAttribute("aria-label", "Copy " + email);
+    }
     copyTarget.setAttribute("title", "Copy email address");
-    link.parentNode.replaceChild(copyTarget, link);
 
     let copyStartedAt = 0;
 
@@ -686,7 +693,7 @@ function initMailCopy() {
           }, 1600);
         })
         .catch(function () {
-          selectTextNode(copyTarget);
+          selectTextNode(getCopySelectionTarget(copyTarget));
           showCopyToast(copyTarget, "Press Ctrl+C to copy");
         });
     }

@@ -109,12 +109,12 @@ body.nav-open {
   place-items: center;
   overflow: hidden;
   background:
-    linear-gradient(112deg, transparent 0 18%, color-mix(in srgb, var(--accent-cool) 10%, transparent) 34%, transparent 58%),
-    linear-gradient(154deg, color-mix(in srgb, var(--accent-blue) 10%, transparent), transparent 42%, color-mix(in srgb, var(--accent) 8%, transparent)),
-    linear-gradient(180deg, #030506, #000203);
+    radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--accent-cool) 12%, transparent), transparent 38%),
+    linear-gradient(112deg, transparent 0 18%, color-mix(in srgb, var(--accent-cool) 8%, transparent) 34%, transparent 58%),
+    linear-gradient(154deg, color-mix(in srgb, var(--accent-blue) 8%, transparent), transparent 42%, color-mix(in srgb, var(--accent) 6%, transparent));
   opacity: 1;
   visibility: visible;
-  pointer-events: auto;
+  pointer-events: none;
   transition: opacity var(--motion-slow) var(--ease), visibility var(--motion-slow) var(--ease);
 }
 
@@ -130,14 +130,16 @@ body.nav-open {
   background:
     repeating-linear-gradient(112deg, transparent 0 42px, color-mix(in srgb, var(--accent-cool) 8%, transparent) 43px 44px, transparent 45px 92px),
     linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-blue) 10%, transparent), transparent);
-  opacity: 0.28;
+  opacity: 0.22;
+  mix-blend-mode: screen;
 }
 
 .has-js .page-loader::after {
   background:
     linear-gradient(120deg, transparent 0 24%, color-mix(in srgb, var(--accent-cool) 16%, transparent) 39%, transparent 54%),
     linear-gradient(80deg, transparent 0 36%, color-mix(in srgb, var(--accent) 12%, transparent) 48%, transparent 62%);
-  opacity: 0.52;
+  opacity: 0.4;
+  mix-blend-mode: screen;
   transform: rotate(-6deg);
   animation: loader-light-sweep 1450ms var(--ease) infinite alternate;
 }
@@ -151,6 +153,8 @@ body.nav-open {
   display: block;
   transform: translateY(0);
   opacity: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
   will-change: transform, opacity;
 }
 
@@ -929,29 +933,50 @@ p {
   text-underline-offset: 4px;
 }
 
-.email-copy-link {
+.email-copy-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.email-copy-inline {
+  vertical-align: baseline;
+}
+
+.email-address {
+  overflow-wrap: anywhere;
+}
+
+.email-copy-button {
   appearance: none;
-  border: 0;
-  background: none;
-  padding: 0;
+  min-height: 28px;
+  border: 1px solid color-mix(in srgb, var(--accent-cool) 36%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-cool) 9%, transparent);
+  padding: 4px 10px;
+  color: var(--text);
   font: inherit;
-  text-align: inherit;
+  font-size: 0.72rem;
+  font-weight: 780;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  text-transform: uppercase;
   cursor: copy;
   transition: color var(--motion-fast) var(--ease), background var(--motion-fast) var(--ease), border-color var(--motion-fast) var(--ease);
 }
 
-.detail-list .email-copy-link,
-.legal-document .email-copy-link,
-.legal-summary .email-copy-link {
-  overflow-wrap: anywhere;
-  color: var(--text);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--accent) 50%, transparent);
-  text-underline-offset: 4px;
+.email-copy-button:hover,
+.email-copy-button:focus-visible {
+  border-color: color-mix(in srgb, var(--accent-cool) 62%, var(--line));
+  background: color-mix(in srgb, var(--accent-cool) 16%, transparent);
+  color: var(--accent-strong);
 }
 
-.email-copy-link.is-copied,
-.email-copy-link.is-copied strong {
+.email-copy-button.is-copied {
+  border-color: color-mix(in srgb, var(--accent) 62%, var(--line));
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
   color: var(--accent-strong);
 }
 
@@ -1262,6 +1287,11 @@ p {
   overflow-wrap: anywhere;
   color: var(--text);
   font-size: 1.05rem;
+}
+
+.contact-row .email-copy-button {
+  justify-self: start;
+  margin-top: 4px;
 }
 
 .page-hero,
